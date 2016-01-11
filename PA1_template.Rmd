@@ -5,15 +5,16 @@ output:
     keep_md: true
 ---
 
-## Loading and preprocessing the data
+# Loading and preprocessing the data
 
-#Setting the working folder
- setwd("RepData_PeerAssessment1/")
-#unzip the repdata zip file
+##Setting the working folder, unzipping the data file and reaching data into data frame - ActivityDF.
+##Loading relevant packages for the data analysis. 
+##As part of data preprocessing, the date column of the data will be converted to the Date format.
+
+```{r, echo = TRUE}
+ ##setwd("RepData_PeerAssessment1/")
  unzip("activity.zip")
-#Read the data file
   ActivityDF <- read.csv("activity.csv")
-#Load relavent packages
   if(!require(dplyr)) {
     install.packages("dplyr")
     library(dplyr)  
@@ -26,76 +27,52 @@ output:
     install.packages("lattice")
     library(lattice)  
   }
-# Convert the date column to Date format.
+
 ActivityDF$date <- as.Date(ActivityDF$date)
+```
 
 
 
-## What is mean total number of steps taken per day?
+#What is mean total number of steps taken per day?
 
-# Create a duplicate of the data frame and ignore all the missing values
+## Duplicating ActivityDF to DF and ignoring all missing values/records
+```{r, echo = TRUE}
 DF <- ActivityDF
 DF <- DF[complete.cases(DF),]
-
-# To compute the Total number of steps per day, we will use the GroupBy function to Sum the steps grouped per day . 
-#DFTotalStepsPerDay <- tapply(X = DF$steps,INDEX = DF$date,FUN = sum, na.rm = T)
-
+```
+## To compute the Total number of steps per day, we will use the GroupBy function to Sum the steps grouped per date .  A histogram will be used to map the frequency of the 'Total Steps Per Day'.  
+```{r, echo = TRUE}
 DFTotalStepsDay <- DF %>% group_by(date) %>% summarise(StepsPerDay = sum(steps))
 
-# A histogram will be used to map the frequency of the 'Total Steps Per Day'.  
-#png("Histogram Plot1 Diff.png", width = 800, height = 800)
-#hist(DFTotalStepsDay$StepsPerDay, col = 'grey', main = "Histogram of Total Steps taken Per Day", xlab = "Total Steps Per Day",ylim = c(0,40))
-#dev.off()
+hist(DFTotalStepsDay$StepsPerDay, col = 'grey', main = "Histogram of Total Steps taken Per Day", xlab = "Total Steps Per Day",ylim = c(0,40))
 
-png("Histogram Plot1.png", width = 800, height = 800)
+cat('The Mean of Total number of steps per day', mean(DFTotalStepsDay$StepsPerDay, na.rm = T))
+cat('The Median of Total number of steps per day', median(DFTotalStepsDay$StepsPerDay, na.rm = T))
+```
+#What is the average daily activity pattern?
 
-plot(x = DFTotalStepsDay$date, y= DFTotalStepsDay$StepsPerDay, type = 'h', lwd = 3, col = 'gray', xlab = 'Date', ylab = 'Total Steps per day', main = "Histogram of Total Steps taken Per Day")
-
-dev.off()
-
-#2. Calculate and report the **mean** and **median** total number of steps taken per day
-
-# Mean of Total number of steps per day. 
-#DFMeanTotalStepsPerDay <- tapply(X = DF$steps,INDEX = DF$date,FUN = mean, na.rm = T)
-DFMeanStepsPerDay <- DF %>% group_by(date) %>% summarise(MeanStepsPerDay = mean(steps, na.rm = T))
-##DFMeanStepsPerDay
-cat('The Mean of Total number of steps per day', mean(DFMeanStepsPerDay$MeanStepsPerDay, na.rm = T))
-
-# Median of Total number of steps per day. 
-#DFMedianTotalStepsPerDay <- tapply(X = DF$steps,INDEX = DF$date,FUN = median, na.rm = T)
-DFMedianStepsPerDay <- DF %>% group_by(date) %>% summarise(MedianStepsPerDay = median(steps, na.rm = T))
-##DFMedianStepsPerDay
-cat('The Median of Total number of steps per day', median(DFMedianStepsPerDay$MedianStepsPerDay, na.rm = T))
-
-
-## What is the average daily activity pattern?
-##1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps ##taken, averaged across all days (y-axis)
-
+## Summarize the avg steps grouped by interval
+```{r, echo = TRUE}
 DFAvgStepsPerInterval <- DF%>% group_by(interval) %>% summarise(AveStepsPerInterval = mean(steps, na.rm = T))
-
 plot(x = DFAvgStepsPerInterval$interval, y= DFAvgStepsPerInterval$AveStepsPerInterval, type = 'l', xlab = 'Intervals', ylab = 'Avg Steps Per Interval', main = "Time Series Plot - Intervals vs Average Steps Per Interval")
+```
 
 ##2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-
+```{r, echo = TRUE}
 maxstepAvgVal <- max(DFAvgStepsPerInterval$AveStepsPerInterval, na.rm = T)
 maxstepAvgInterval <- DFAvgStepsPerInterval$interval[DFAvgStepsPerInterval$AveStepsPerInterval == maxstepAvgVal]
 
-cat(" The 5-minute interval, on average, which contains the maximum number of steps is ", maxstepAvgInterval)
+cat("The 5-minute interval, on average, which contains the maximum number of steps is ", maxstepAvgInterval)
+```
 
+# Inputing missing values
 
-
-## Inputing missing values
-
-#1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
-# I will use the Complete.Cases to count the inverse of the complete cases by summing them up. 
+##1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
+## Using Complete.Cases to count the total missing values. 
+```{r, echo = TRUE}
 DFAll <- ActivityDF
 MissVal_Total <- sum(!complete.cases(DFAll))
 cat('Total Number of Missing values is ', MissVal_Total)
-
-#2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be #sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
-#3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
-
-# I will use the mean of the 5-minute interval to fill in the missing value(steps) in the dataset. The output dataset will be stored in dataframe "DFAll" 
 
 DFAllLen <- nrow(DFAll)
 for (i in 1:DFAllLen)
@@ -107,38 +84,17 @@ for (i in 1:DFAllLen)
 }
 
 cat('The data frame with the missing values filled in is DFAll')
-
-#4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
-
 DFAllTtlStpsday <- DFAll %>% group_by(date) %>% summarise(StepsPerDay = sum(steps))
-png("Histogram Plot2.png", width = 800, height = 800)
-plot(x = DFAllTtlStpsday$date, y= DFAllTtlStpsday$StepsPerDay, type = 'h', lwd = 3, col = 'gray', xlab = 'Date', ylab = 'Total Steps per day', main = "Histogram of Total Steps taken Per Day - DF with no Missing data")
-dev.off()
 
-#png("Histogram Plot2 Diff.png", width = 800, height = 800)
-#hist(DFAllTtlStpsday$StepsPerDay, col = 'grey', main = "Histogram of Total Steps taken Per Day - DF with no Missing data", xlab = "Total Steps Per Day",ylim = c(0,40))
-#dev.off()
+hist(DFAllTtlStpsday$StepsPerDay, col = 'grey', main = "Histogram of Total Steps taken Per Day - DF with no Missing data", xlab = "Total Steps Per Day",ylim = c(0,40))
 
-# Mean of Total number of steps per day on the Dataframe with no Missing values. 
-DFAllTtlMeanStepsPerDay <- DFAll %>% group_by(date) %>% summarise(MeanStepsPerDay = mean(steps, na.rm = T))
-##DFMeanStepsPerDay
-cat('The Mean of Total number of steps per day', mean(DFAllTtlMeanStepsPerDay$MeanStepsPerDay, na.rm = T))
+cat('The Mean of Total number of steps per day', mean(DFAllTtlStpsday$StepsPerDay, na.rm = T))
+cat('The Median of Total number of steps per day', median(DFAllTtlStpsday$StepsPerDay, na.rm = T))
+```
 
-# Median of Total number of steps per day on the Dataframe with no Missing values. 
-DFAllTtlMedianStepsPerDay <- DFAll %>% group_by(date) %>% summarise(MedianStepsPerDay = median(steps, na.rm = T))
-##DFMedianStepsPerDay
-cat('The Median of Total number of steps per day', median(DFAllTtlMedianStepsPerDay$MedianStepsPerDay, na.rm = T))
+# Are there differences in activity patterns between weekdays and weekends?
 
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
-
-For this part the `weekdays()` function may be of some help here. Use
-the dataset with the filled-in missing values for this part.
-
-1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
-
+```{r, echo = TRUE}
 weekends <- c('Saturday','Sunday')
 DFAllLen <- nrow(DFAll)
 for (i in 1:DFAllLen){
@@ -147,18 +103,13 @@ for (i in 1:DFAllLen){
     DFAll$DayIndicator[i] = 'weekend'
   }else{
     DFAll$DayIndicator[i] = 'weekday'
-  } 
-
-
-##1. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average ##number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the ##following, which was created using **simulated data**:
+  }
+}
 
 
 DFAllAvgStepsPerInterval <- DFAll%>% group_by(interval,DayIndicator) %>% summarise(AveStepsPerInterval = mean(steps, na.rm = T))
 
-
-png("Time Series Plot - Panel plot.png", width = 1000, height = 1000)
-
 with(DFAllAvgStepsPerInterval,xyplot(AveStepsPerInterval~interval|DayIndicator, type = 'l',show.given = T, 
 layout = c(1,2),  xlab = "Interval", ylab = "Number of Steps", ylim = c(0,250), xlim = c(0,2500), col = 'Blue'))
 
-dev.off()
+```
