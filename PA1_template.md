@@ -2,14 +2,11 @@
 
 # Loading and preprocessing the data
 
-###Setting the working folder, unzipping the data file and reading data into data frame - ActivityDF.
-###Loading relevant packages for the data analysis. 
-###As part of data preprocessing, the date column of the data will be converted to the Date format.
+###Setting the working folder, unzipping the data file and reading data into data frame - ActivityDF.Loading relevant packages for the data analysis. As part of data preprocessing, the date column of the data will be converted to the Date format.
 
 
 ```r
- ###setwd("RepData_PeerAssessment1/")
- unzip("activity.zip")
+  unzip("activity.zip")
   ActivityDF <- read.csv("activity.csv")
   if(!require(dplyr)) {
     install.packages("dplyr")
@@ -82,7 +79,7 @@ ActivityDF$date <- as.Date(ActivityDF$date)
 DF <- ActivityDF
 DF <- DF[complete.cases(DF),]
 ```
-### To compute the Total number of steps per day, we will use the GroupBy function to Sum the steps grouped per date .  A ### histogram will be used to map the frequency of the 'Total Steps Per Day'.  
+### To compute the Total number of steps per day, we will use the GroupBy function to Sum the steps grouped per date .  A histogram will be used to map the frequency of the 'Total Steps Per Day'.  
 
 ```r
 DFTotalStepsDay <- DF %>% group_by(date) %>% summarise(StepsPerDay = sum(steps))

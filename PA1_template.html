@@ -66,16 +66,9 @@ img {
 
 <div id="loading-and-preprocessing-the-data" class="section level1">
 <h1>Loading and preprocessing the data</h1>
-<div id="setting-the-working-folder-unzipping-the-data-file-and-reading-data-into-data-frame---activitydf." class="section level3">
-<h3>Setting the working folder, unzipping the data file and reading data into data frame - ActivityDF.</h3>
-</div>
-<div id="loading-relevant-packages-for-the-data-analysis." class="section level3">
-<h3>Loading relevant packages for the data analysis.</h3>
-</div>
-<div id="as-part-of-data-preprocessing-the-date-column-of-the-data-will-be-converted-to-the-date-format." class="section level3">
-<h3>As part of data preprocessing, the date column of the data will be converted to the Date format.</h3>
-<pre class="r"><code> ###setwd(&quot;RepData_PeerAssessment1/&quot;)
- unzip(&quot;activity.zip&quot;)
+<div id="setting-the-working-folder-unzipping-the-data-file-and-reading-data-into-data-frame---activitydf.loading-relevant-packages-for-the-data-analysis.-as-part-of-data-preprocessing-the-date-column-of-the-data-will-be-converted-to-the-date-format." class="section level3">
+<h3>Setting the working folder, unzipping the data file and reading data into data frame - ActivityDF.Loading relevant packages for the data analysis. As part of data preprocessing, the date column of the data will be converted to the Date format.</h3>
+<pre class="r"><code>  unzip(&quot;activity.zip&quot;)
   ActivityDF &lt;- read.csv(&quot;activity.csv&quot;)
   if(!require(dplyr)) {
     install.packages(&quot;dplyr&quot;)
@@ -113,7 +106,7 @@ img {
 DF &lt;- DF[complete.cases(DF),]</code></pre>
 </div>
 <div id="to-compute-the-total-number-of-steps-per-day-we-will-use-the-groupby-function-to-sum-the-steps-grouped-per-date-.-a-histogram-will-be-used-to-map-the-frequency-of-the-total-steps-per-day." class="section level3">
-<h3>To compute the Total number of steps per day, we will use the GroupBy function to Sum the steps grouped per date . A ### histogram will be used to map the frequency of the ‘Total Steps Per Day’.</h3>
+<h3>To compute the Total number of steps per day, we will use the GroupBy function to Sum the steps grouped per date . A histogram will be used to map the frequency of the ‘Total Steps Per Day’.</h3>
 <pre class="r"><code>DFTotalStepsDay &lt;- DF %&gt;% group_by(date) %&gt;% summarise(StepsPerDay = sum(steps))
 
 hist(DFTotalStepsDay$StepsPerDay, col = 'grey', main = &quot;Histogram of Total Steps taken Per Day&quot;, xlab = &quot;Total Steps Per Day&quot;,ylim = c(0,40))</code></pre>
