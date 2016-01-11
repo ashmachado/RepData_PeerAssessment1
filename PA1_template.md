@@ -2,13 +2,13 @@
 
 # Loading and preprocessing the data
 
-##Setting the working folder, unzipping the data file and reaching data into data frame - ActivityDF.
-##Loading relevant packages for the data analysis. 
-##As part of data preprocessing, the date column of the data will be converted to the Date format.
+###Setting the working folder, unzipping the data file and reading data into data frame - ActivityDF.
+###Loading relevant packages for the data analysis. 
+###As part of data preprocessing, the date column of the data will be converted to the Date format.
 
 
 ```r
- ##setwd("RepData_PeerAssessment1/")
+ ###setwd("RepData_PeerAssessment1/")
  unzip("activity.zip")
   ActivityDF <- read.csv("activity.csv")
   if(!require(dplyr)) {
@@ -76,13 +76,13 @@ ActivityDF$date <- as.Date(ActivityDF$date)
 
 #What is mean total number of steps taken per day?
 
-## Duplicating ActivityDF to DF and ignoring all missing values/records
+### Duplicating ActivityDF to DF and ignoring all missing values/records
 
 ```r
 DF <- ActivityDF
 DF <- DF[complete.cases(DF),]
 ```
-## To compute the Total number of steps per day, we will use the GroupBy function to Sum the steps grouped per date .  A histogram will be used to map the frequency of the 'Total Steps Per Day'.  
+### To compute the Total number of steps per day, we will use the GroupBy function to Sum the steps grouped per date .  A ### histogram will be used to map the frequency of the 'Total Steps Per Day'.  
 
 ```r
 DFTotalStepsDay <- DF %>% group_by(date) %>% summarise(StepsPerDay = sum(steps))
@@ -109,7 +109,7 @@ cat('The Median of Total number of steps per day', median(DFTotalStepsDay$StepsP
 ```
 #What is the average daily activity pattern?
 
-## Summarize the avg steps grouped by interval
+### Summarize the avg steps grouped by interval
 
 ```r
 DFAvgStepsPerInterval <- DF%>% group_by(interval) %>% summarise(AveStepsPerInterval = mean(steps, na.rm = T))
@@ -118,7 +118,7 @@ plot(x = DFAvgStepsPerInterval$interval, y= DFAvgStepsPerInterval$AveStepsPerInt
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)\
 
-##2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+###2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```r
 maxstepAvgVal <- max(DFAvgStepsPerInterval$AveStepsPerInterval, na.rm = T)
@@ -133,8 +133,8 @@ cat("The 5-minute interval, on average, which contains the maximum number of ste
 
 # Inputing missing values
 
-##1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
-## Using Complete.Cases to count the total missing values. 
+###1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
+### Using Complete.Cases to count the total missing values. 
 
 ```r
 DFAll <- ActivityDF
